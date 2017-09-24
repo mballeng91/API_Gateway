@@ -9,7 +9,7 @@ class AuthenticateController < ApplicationController
                 'Content-Type' => 'application/json'
             }
         }
-        result = HTTParty.post("http://192.168.99.101:3001/authenticate", options)
+        result = HTTParty.post("http://192.168.99.101:3000/authenticate", options)
         if result["auth_token"]
             render json: {
                 token: result["auth_token"],

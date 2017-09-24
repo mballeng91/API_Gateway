@@ -1,8 +1,8 @@
 class ManageEventsController < ApplicationController
-    USERS_MS = "http://192.168.99.101:3001/"
-    EVENTS_MS = "http://192.168.99.101:XXXX"
-    INVITES_MS = "http://192.168.99.101:XXXX/"
-    ATTENDANCE_MS = "http://192.168.99.101:XXXX/"
+    USERS_MS = "http://192.168.99.101:3000/"
+    EVENTS_MS = "http://192.168.99.101:3006/"
+    INVITES_MS = "http://192.168.99.101:3005/"
+    ATTENDANCE_MS = "http://192.168.99.101:3004/"
 
     def createEvent
         if request.headers.include? "Authorization"
@@ -13,11 +13,11 @@ class ManageEventsController < ApplicationController
                         :description => params[:description],
                         :address => params[:address],
                         :phone => params[:phone],
-                        :startTime => params[:startTime],
-                        :endTime => params[:endTime],
+                        :start_time => params[:start_time],
+                        :end_time => params[:end_time],
                         :latitude => params[:latitude],
                         :longitude => params[:longitude],
-                        :ownerId => current_user["id"]
+                        :owner_id => current_user["id"]
                     }.to_json,
                     :headers => {
                         'Content-Type' => 'application/json'
@@ -40,7 +40,7 @@ class ManageEventsController < ApplicationController
             render json: {
                 message: "Necesita de un token para realizar las peticiones",
             }, status: :unauthorized
-        end   
+        end
     end
 
     def getEvents
@@ -121,7 +121,7 @@ class ManageEventsController < ApplicationController
                 invitations = getInvitations(params[:event_id])
                 render json: {
                     event: JSON.parse(event.body),
-                    invitations: JSON.parse(invitation.body)
+                    invitations: JSON.parse(invitation.body),
                     attendance: JSON.parse(attendance.body)
                 }, status: :ok
             end
