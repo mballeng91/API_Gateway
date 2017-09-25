@@ -10,7 +10,6 @@ Rails.application.routes.draw do
   post '/events/:event_id/attendance', to: 'manage_events#defineAttendance'  
 
   post '/users/', to: 'manage_users#createUser'
-  # put '/users/', to: 'manage_users#updateUser'
-  # delete '/users/', to: 'manage_users#deleteteUser'
-  put '/users/update/:id', to: 'manage_users#updateUser'
+  put '/users/', to: 'manage_users#updateUser'
+  delete '/users/', to: 'manage_users#deleteteUser'
 end

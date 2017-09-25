@@ -43,6 +43,37 @@ class ManageEventsController < ApplicationController
         end
     end
 
+    def updateEvent
+        if request.headers.include? "Authorization"
+            if current_user = checkToken(request.headers["Authorization"])
+                options = {
+                    :body => {
+                        params[:event]
+                    }.to_json,
+                    :headers => {
+                        'Content-Type' => 'application/json'
+                    }
+                }
+                result = HTTParty.post(EVENTS_MS + "eventms", options)
+                if result.code == 200
+                    render json: {
+                        message: "El evento se creó correctamente",
+                        user: JSON.parse(result.body)
+                    }, status: :ok
+                else
+                    render json: {
+                        message: "Ocurrió un error al crear el evento",
+                        errors: JSON.parse(result.body)
+                    }, status: :bad_request
+                end
+            end
+        else
+            render json: {
+                message: "Necesita de un token para realizar las peticiones",
+            }, status: :unauthorized
+        end
+    end
+
     def getEvents
         if request.headers.include? "Authorization"
             if current_user = checkToken(request.headers["Authorization"])
@@ -103,7 +134,6 @@ class ManageEventsController < ApplicationController
                                 }
                             }
                             response = HTTParty.post(ATTENDANCE_MS + "api/attendance/", options_attendance)
-                            puts response.parsed_response
                             if response.parsed_response["code"] != 201
                                 break
                             end
@@ -140,7 +170,6 @@ class ManageEventsController < ApplicationController
             if current_user = checkToken(request.headers["Authorization"]) && event = checkEvent(params[:event_id])
               invitations = getInvitations(params[:event_id])
                 if invitations
-                  puts invitations
                   attendance = getAttendance(params[:event_id])
                   if attendance
                     render json: {
@@ -168,14 +197,14 @@ class ManageEventsController < ApplicationController
                     }
                 }
                 result = HTTParty.post(ATTENDANCE_MS + "api/attendance/", options)
-                if result.code == 200
+                if result.parsed_response["code"] == 200
                     render json: {
                         message: "Se cambió el estado de asistencia correctamente",
                     }, status: :ok
                 else
                     render json: {
                         message: "Ocurrió un error al asignar la asistencia",
-                        errors: JSON.parse(result.body)
+                        errors: result.parsed_response
                     }, status: :bad_request
                 end
             end
