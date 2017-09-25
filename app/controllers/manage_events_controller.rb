@@ -27,7 +27,7 @@ class ManageEventsController < ApplicationController
                 if result.code == 201
                     render json: {
                         message: "El evento se creó correctamente",
-                        user: JSON.parse(result.body)
+                        event: JSON.parse(result.body)
                     }, status: :created
                 else
                     render json: {
@@ -57,12 +57,12 @@ class ManageEventsController < ApplicationController
                 result = HTTParty.post(EVENTS_MS + "eventms", options)
                 if result.code == 200
                     render json: {
-                        message: "El evento se creó correctamente",
-                        user: JSON.parse(result.body)
+                        message: "El evento se modificó correctamente",
+                        event: JSON.parse(result.body)
                     }, status: :ok
                 else
                     render json: {
-                        message: "Ocurrió un error al crear el evento",
+                        message: "Ocurrió un error al modificar el evento",
                         errors: JSON.parse(result.body)
                     }, status: :bad_request
                 end
@@ -178,6 +178,42 @@ class ManageEventsController < ApplicationController
                         attendance: JSON.parse(attendance.body)
                     }, status: :ok
                   end
+                end
+            end
+        end
+    end
+# Pendiente por probar &%
+    def getUserEvents
+        if request.headers.include? "Authorization"
+            if current_user = checkToken(request.headers["Authorization"])
+                result = HTTParty.get(EVENTS_MS + "view/my_events?owner_id=" + current_user["id"].to_s)
+                if result.code == 200
+                    render json: {
+                        events: JSON.parse(result.body)
+                    }, status: :created
+                else
+                    render json: {
+                        message: "Ocurrió un error al obtener los eventos",
+                        errors: JSON.parse(result.body)
+                    }, status: :bad_request
+                end
+            end
+        end
+    end
+# Pendiente por probar &%
+    def getUserInvitations
+        if request.headers.include? "Authorization"
+            if current_user = checkToken(request.headers["Authorization"])
+                result = HTTParty.get(XXXXXX + "view/my_invitations?owner_id=" + current_user["id"].to_s)
+                if result.code == 200
+                    render json: {
+                        events: JSON.parse(result.body)
+                    }, status: :created
+                else
+                    render json: {
+                        message: "Ocurrió un error al obtener las invitaciones",
+                        errors: JSON.parse(result.body)
+                    }, status: :bad_request
                 end
             end
         end
