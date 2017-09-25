@@ -190,7 +190,7 @@ class ManageEventsController < ApplicationController
                 if result.code == 200
                     render json: {
                         events: JSON.parse(result.body)
-                    }, status: :created
+                    }, status: :ok
                 else
                     render json: {
                         message: "Ocurrió un error al obtener los eventos",
@@ -208,7 +208,7 @@ class ManageEventsController < ApplicationController
                 if result.code == 200
                     render json: {
                         events: JSON.parse(result.body)
-                    }, status: :created
+                    }, status: :ok
                 else
                     render json: {
                         message: "Ocurrió un error al obtener las invitaciones",
