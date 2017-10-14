@@ -31,69 +31,25 @@ class ManageUsersController < ApplicationController
     end
 
     def updateUser
-        if current_user = checkToken(request.headers["Authorization"])
-            options = {
-                :body => params[:user],
-                :headers => {
-                    'Content-Type' => 'application/json',
-                    'Authorization' => request.headers["Authorization"]
-                }
-            }
-            result = HTTParty.put(USERS_MS + "users/" + current_user["id"], options)
-            if result.code == 200
-                render json: {
-                    message: "El usuario se modificó correctamente",
-                    user: JSON.parse(result.body)
-                }, status: :ok
-            else
-                render json: {
-                    message: "Ocurrió un error al modificar el usuario",
-                    errors: JSON.parse(result.body)
-                }, status: :bad_request
-            end
-        else
-            render json: {
-                message: "Necesita de un token para realizar las peticiones",
-            }, status: :unauthorized
-        end
-    end
-
-    def deleteUser
-        if current_user = checkToken(request.headers["Authorization"])
-            result = HTTParty.delete(USERS_MS + "users/" + current_user["id"])
-            if result.code == 200
-                render json: {
-                    message: "El usuario se eliminó correctamente",
-                    user: JSON.parse(result.body)
-                }, status: :ok
-            else
-                render json: {
-                    message: "Ocurrió un error al eliminar el usuario",
-                    errors: JSON.parse(result.body)
-                }, status: :bad_request
-            end
-        else
-            render json: {
-                message: "Necesita de un token para realizar las peticiones",
-            }, status: :unauthorized
-        end
-    end
-
-    def checkToken(token)
         options = {
+            :body => params[:manage_user],
             :headers => {
-                'Accept' => 'application/json',
-                'Authorization' => token
+                'Content-Type' => 'application/json',
+                'Authorization' => request.headers["Authorization"]
             }
         }
-        result = HTTParty.get(USERS_MS + "test", options)
-
+        puts options
+        result = HTTParty.put(USERS_MS + "users/" + params[:id], options)
         if result.code == 200
-            return result
+            render json: {
+                message: "El usuario se creó correctamente",
+                user: JSON.parse(result.body)
+            }, status: :ok
         else
             render json: {
-                message: "El token no es valido o ya expriró",
-            }, status: :unauthorized
+                message: "Ocurrió un error al modificar el usuario",
+                errors: JSON.parse(result.body)
+            }, status: :bad_request
         end
     end
 end
