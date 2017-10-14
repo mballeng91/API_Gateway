@@ -1,5 +1,5 @@
 class ManageEventsController < ApplicationController
-    USERS_MS = "http://192.168.99.101:3000/"
+    USERS_MS = "http://192.168.99.101:3001/"
     EVENTS_MS = "http://192.168.99.101:3006/"
     INVITES_MS = "http://192.168.99.101:3005/"
     ATTENDANCE_MS = "http://192.168.99.101:3004/"
@@ -8,6 +8,7 @@ class ManageEventsController < ApplicationController
     def createEvent
         if request.headers.include? "Authorization"
             if current_user = checkToken(request.headers["Authorization"])
+                # puts current_user.header['jwt']
                 options = {
                     :body => {
                         :name => params[:name],
@@ -28,12 +29,14 @@ class ManageEventsController < ApplicationController
                 if result.code == 201
                     render json: {
                         message: "El evento se creó correctamente",
-                        user: JSON.parse(result.body)
+                        user: JSON.parse(result.body),
+                        token: current_user.header['jwt']
                     }, status: :created
                 else
                     render json: {
                         message: "Ocurrió un error al crear el evento",
-                        errors: JSON.parse(result.body)
+                        errors: JSON.parse(result.body),
+                        token: current_user.header['jwt']
                     }, status: :bad_request
                 end
             end
@@ -51,11 +54,13 @@ class ManageEventsController < ApplicationController
                 if result.code == 200
                     render json: {
                         events: JSON.parse(result.body),
+                        token: current_user.header['jwt']
                     }, status: :ok
                 else
                     render json: {
                         message: "Ocurrió un error al obtener los eventos",
-                        errors: JSON.parse(result.body)
+                        errors: JSON.parse(result.body),
+                        token: current_user.header['jwt']
                     }, status: :bad_request
                 end
             end
@@ -112,17 +117,20 @@ class ManageEventsController < ApplicationController
                         if response.parsed_response["code"] != 201
                             render json: {
                                 message: "Ocurrió un error al registrar la asistencia de los usuarios",
-                                errors: response.parsed_response
+                                errors: response.parsed_response,
+                                token: current_user.header['jwt']
                             }, status: :bad_request
                         else
                             render json: {
                                 message: "Se invitaron los usuarios correctamente",
+                                token: current_user.header['jwt']
                             }, status: :ok
                         end
                     else
                         render json: {
                             message: "Ocurrió un error al invitar a los usuarios",
-                            errors: JSON.parse(result.body)
+                            errors: JSON.parse(result.body),
+                            token: current_user.header['jwt']
                         }, status: :bad_request
                     end
 
@@ -147,7 +155,8 @@ class ManageEventsController < ApplicationController
                     render json: {
                         event: JSON.parse(event.body),
                         invitations: invitations.parsed_response,
-                        attendance: attendance.parsed_response
+                        attendance: attendance.parsed_response,
+                        token: current_user.header['jwt']
                     }, status: :ok
                   end
                 end
@@ -176,11 +185,13 @@ class ManageEventsController < ApplicationController
                 if result["code"] == 200
                     render json: {
                         message: "Se cambió el estado de asistencia correctamente",
+                        token: current_user.header['jwt']
                     }, status: :ok
                 else
                     render json: {
                         message: "Ocurrió un error al asignar la asistencia",
-                        errors: result.parsed_response
+                        errors: result.parsed_response,
+                        token: current_user.header['jwt']
                     }, status: :bad_request
                 end
             end
@@ -201,6 +212,7 @@ class ManageEventsController < ApplicationController
         else
             render json: {
                 message: "El evento no registra invitaciones",
+                token: current_user.header['jwt']
             }, status: :bad_request
             return false
         end
@@ -213,6 +225,7 @@ class ManageEventsController < ApplicationController
         else
             render json: {
                 message: "El evento no existe o ya expiró",
+                token: current_user.header['jwt']
             }, status: :unauthorized
         end
     end
@@ -224,7 +237,7 @@ class ManageEventsController < ApplicationController
                 'Authorization' => token
             }
         }
-        result = HTTParty.get(USERS_MS + "test", options)
+        result = HTTParty.get(USERS_MS + "authorize", options)
 
         if result.code == 200
             return result
@@ -232,6 +245,7 @@ class ManageEventsController < ApplicationController
             render json: {
                 message: "El token no es valido o ya expriró",
             }, status: :unauthorized
+            return false
         end
     end
 end
