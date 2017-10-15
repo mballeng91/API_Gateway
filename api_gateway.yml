@@ -149,35 +149,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorModel'
-    put:
-      security:
-        - token: []
-      tags: 
-        - Events
-      summary: Update an event
-      parameters:
-        - name: Event
-          in: body
-          description: Event information (All params are optional)
-          schema:
-            $ref: '#/definitions/EventUpdate'
-      responses:
-        '200':
-          description: ok
-          schema:
-            $ref: '#/definitions/EventInfo'
-        '400':
-          description: Bad request
-          schema:
-            $ref: '#/definitions/ErrorModel'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorModelOnlyMessage'
-        '500':
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ErrorModel'
+    
     get:
       security:
         - token: []
@@ -245,10 +217,32 @@ paths:
       responses:
         '200':
           description: ok
+          schema:
+            $ref: '#/definitions/ResponseToken'
         '400':
           description: Bad request
           schema:
             $ref: '#/definitions/ErrorModel'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModelOnlyMessage'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+  /events/myEvents:
+    get:
+      security:
+        - token: []
+      tags: 
+        - Events
+      summary: Returns all the events of the user
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/EventsList'
         '401':
           description: Unauthorized
           schema:
@@ -284,6 +278,26 @@ paths:
           description: Bad request
           schema:
             $ref: '#/definitions/ErrorModel'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModelOnlyMessage'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+  /sites:
+    get:
+      security:
+        - token: []
+      tags: 
+        - Sites
+      summary: Returns all the sites
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/SitesList'
         '401':
           description: Unauthorized
           schema:
@@ -365,17 +379,11 @@ definitions:
         type: string
       description:
         type: string
-      address:
-        type: string
-      phone:
+      site_id:
         type: integer
       start_time:
         type: string
       end_time:
-        type: string
-      latitude:
-        type: string
-      longitude:
         type: string
         
   EventUpdate:
@@ -410,19 +418,13 @@ definitions:
         type: string
       description:
         type: string
-      address:
-        type: string
-      phone:
+      site_id:
         type: integer
       start_time:
         type: string
       end_time:
         type: string
-      latitude:
-        type: string
-      longitude:
-        type: string
-        
+
   EventInfo:
     type: object
     properties:
@@ -432,6 +434,8 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/EventCreated'
+      token:
+        type: string
           
   EventWithInfo:
     type: object
@@ -448,11 +452,42 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Attendance'
+      token:
+        type: string
           
   EventsList:
-      type: array
-      items:
-        $ref: '#/definitions/EventCreated'
+    type: object
+    properties:
+      events:
+        type: array
+        items:
+          $ref: '#/definitions/EventCreated'
+      token:
+        type: string
+        
+  SitesList:
+    type: object
+    properties:
+      sites:
+        type: array
+        items:
+          $ref: '#/definitions/SiteInfo'
+      token:
+        type: string
+  SiteInfo:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      latitude:
+        type: string
+      longitude:
+        type: integer
+      image:
+        type: string
+
 #Attendance
   Attendance:
     type: object
@@ -508,6 +543,11 @@ definitions:
         type: string
       Email:
         type: string
+  ResponseToken:
+    type: object
+    properties:
+      token:
+        type: string
 
 # Errors
   ErrorModel:
@@ -520,6 +560,9 @@ definitions:
         default: asd
       errors:
         type: object
+      token:
+        type: string
+        default: asd
   ErrorModelOnlyMessage:
     type: object
     required:

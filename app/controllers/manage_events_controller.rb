@@ -13,19 +13,16 @@ class ManageEventsController < ApplicationController
                     :body => {
                         :name => params[:name],
                         :description => params[:description],
-                        :address => params[:address],
-                        :phone => params[:phone],
+                        :site_id => params[:site_id],
                         :start_time => params[:start_time],
                         :end_time => params[:end_time],
-                        :latitude => params[:latitude],
-                        :longitude => params[:longitude],
                         :owner_id => current_user["id"]
                     }.to_json,
 			:headers => {
                         	'Content-Type' => 'application/json'
                     }
                 }
-                result = HTTParty.post(EVENTS_MS + "eventms", options)
+                result = HTTParty.post(EVENTS_MS + "events", options)
                 if result.code == 201
                     render json: {
                         message: "El evento se creó correctamente",
@@ -50,7 +47,7 @@ class ManageEventsController < ApplicationController
     def getEvents
         if request.headers.include? "Authorization"
             if current_user = checkToken(request.headers["Authorization"])
-                result = HTTParty.get(EVENTS_MS + "eventms")
+                result = HTTParty.get(EVENTS_MS + "events")
                 if result.code == 200
                     render json: {
                         events: JSON.parse(result.body),
@@ -59,6 +56,54 @@ class ManageEventsController < ApplicationController
                 else
                     render json: {
                         message: "Ocurrió un error al obtener los eventos",
+                        errors: JSON.parse(result.body),
+                        token: current_user.header['jwt']
+                    }, status: :bad_request
+                end
+            end
+        else
+            render json: {
+                message: "Necesita de un token para realizar las peticiones",
+            }, status: :unauthorized
+        end
+    end
+
+    def getMyEvents
+        if request.headers.include? "Authorization"
+            if current_user = checkToken(request.headers["Authorization"])
+                result = HTTParty.get(EVENTS_MS + "view/myevents/" + current_user["id"])
+                if result.code == 200
+                    render json: {
+                        events: JSON.parse(result.body),
+                        token: current_user.header['jwt']
+                    }, status: :ok
+                else
+                    render json: {
+                        message: "Ocurrió un error al obtener los eventos",
+                        errors: JSON.parse(result.body),
+                        token: current_user.header['jwt']
+                    }, status: :bad_request
+                end
+            end
+        else
+            render json: {
+                message: "Necesita de un token para realizar las peticiones",
+            }, status: :unauthorized
+        end
+    end
+
+    def getSites
+        if request.headers.include? "Authorization"
+            if current_user = checkToken(request.headers["Authorization"])
+                result = HTTParty.get(EVENTS_MS + "sites")
+                if result.code == 200
+                    render json: {
+                        sites: JSON.parse(result.body),
+                        token: current_user.header['jwt']
+                    }, status: :ok
+                else
+                    render json: {
+                        message: "Ocurrió un error al obtener los sitios",
                         errors: JSON.parse(result.body),
                         token: current_user.header['jwt']
                     }, status: :bad_request
@@ -219,7 +264,7 @@ class ManageEventsController < ApplicationController
     end
 
     def checkEvent(id)
-        result = HTTParty.get(EVENTS_MS + id.to_s)
+        result = HTTParty.get(EVENTS_MS + "events/" + id.to_s)
         if result.code == 200
             return result
         else
