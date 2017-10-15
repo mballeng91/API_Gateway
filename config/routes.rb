@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
   post '/users/create', to: 'manage_users#createUser'
   put '/users/update/:id', to: 'manage_users#updateUser'
+  get '/users/search/:email', to: 'manage_users#searchUsers'
 
 
   put '/events/:event_id/attendance', to: 'manage_events#defineAttendance'  

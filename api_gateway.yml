@@ -118,6 +118,32 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorModel'
+  /users/search/{email}:
+    get:
+      security:
+        - token: []
+      tags: 
+        - Users
+      summary: Returns the users with that match selected email
+      parameters:
+        - name: email
+          in: path
+          description: The email to search
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/UsersList'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModelOnlyMessage'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
   /events:
     post:
       security:
@@ -370,6 +396,15 @@ definitions:
             type: string
           password_confirmation:
             type: string
+  UsersList:
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          $ref: '#/definitions/UserInfo'
+      token:
+        type: string
           
 # Event
   Event:

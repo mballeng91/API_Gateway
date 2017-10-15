@@ -52,4 +52,47 @@ class ManageUsersController < ApplicationController
             }, status: :bad_request
         end
     end
+
+    def searchUsers
+        if request.headers.include? "Authorization"
+            if current_user = checkToken(request.headers["Authorization"])
+                result = HTTParty.get(USERS_MS + "search?email=" + :params[email].to_s)
+                if result.code == 200
+                    render json: {
+                        users: JSON.parse(result.body),
+                        token: current_user.header['jwt']
+                    }, status: :ok
+                else
+                    render json: {
+                        message: "Ocurrió un error al obtener los usuarios",
+                        errors: JSON.parse(result.body),
+                        token: current_user.header['jwt']
+                    }, status: :bad_request
+                end
+            end
+        else
+            render json: {
+                message: "Necesita de un token para realizar las peticiones",
+            }, status: :unauthorized
+        end
+    end
+
+    def checkToken(token)
+        options = {
+            :headers => {
+                'Accept' => 'application/json',
+                'Authorization' => token
+            }
+        }
+        result = HTTParty.get(USERS_MS + "authorize", options)
+
+        if result.code == 200
+            return result
+        else
+            render json: {
+                message: "El token no es valido o ya expriró",
+            }, status: :unauthorized
+            return false
+        end
+    end
 end
