@@ -1,5 +1,5 @@
 class ManageUsersController < ApplicationController
-    USERS_MS = "http://192.168.99.101:3000/"
+    USERS_MS = "http://192.168.99.101:3001/"
     def createUser
         options = {
             :body => {
@@ -20,7 +20,7 @@ class ManageUsersController < ApplicationController
         if result.code == 201
             render json: {
                 message: "El usuario se creó correctamente",
-                user: JSON.parse(result.body)
+                user: result["user"]
             }, status: :created
         else
             render json: {
