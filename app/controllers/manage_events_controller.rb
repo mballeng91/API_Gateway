@@ -1,6 +1,6 @@
 class ManageEventsController < ApplicationController
-    USERS_MS = "http://192.168.99.101:3001/"
-    EVENTS_MS = "http://192.168.99.101:3006/"
+    USERS_MS = "http://192.168.99.101:3000/"
+    EVENTS_MS = "http://192.168.99.101:3008/"
     INVITES_MS = "http://192.168.99.101:3005/"
     ATTENDANCE_MS = "http://192.168.99.101:3004/"
     ATTENDANCE_MS2 = "http://192.168.99.101:3004"
@@ -113,13 +113,13 @@ class ManageEventsController < ApplicationController
                 if result.code == 200
                     render json: {
                         events: JSON.parse(result.body),
-                        token: current_user.header['jwt']                        
+                        token: current_user.header['jwt']
                     }, status: :ok
                 else
                     render json: {
                         message: "Ocurrió un error al obtener los eventos",
                         errors: JSON.parse(result.body),
-                        token: current_user.header['jwt']                        
+                        token: current_user.header['jwt']
                     }, status: :bad_request
                 end
             end

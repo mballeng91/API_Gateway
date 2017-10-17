@@ -9,7 +9,7 @@ class AuthenticateController < ApplicationController
                 'Content-Type' => 'application/json'
             }
         }
-        result = HTTParty.post("http://192.168.99.101:3001/authenticate", options)
+        result = HTTParty.post("http://192.168.99.101:3000/authenticate", options)
         if result["token"]
             render json: {
                 token: result["token"],
@@ -28,7 +28,7 @@ class AuthenticateController < ApplicationController
                 'Authorization' => request.headers["Authorization"]
             }
         }
-        result = HTTParty.get("http://192.168.99.101:3001/logout", options)
+        result = HTTParty.get("http://192.168.99.101:3000/logout", options)
 
         if result.code == 200
             render json: {
