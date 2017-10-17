@@ -87,6 +87,21 @@ class ManageUsersController < ApplicationController
         end
     end
 
+    def profile
+        if request.headers.include? "Authorization"
+            if current_user = checkToken(request.headers["Authorization"])
+                render json: {
+                    user: current_user["user"],
+                    token: current_user.header['jwt']
+                }, status: :ok
+            end
+        else
+            render json: {
+                message: "Necesita de un token para realizar las peticiones",
+            }, status: :unauthorized
+        end
+    end
+
     def checkToken(token)
         options = {
             :headers => {

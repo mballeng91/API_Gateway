@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   get '/sites', to: 'manage_events#getSites'
 
   post '/users/', to: 'manage_users#createUser'
+  get '/users/myProfile', to: 'manage_users#profile'  
   put '/users/update/:id', to: 'manage_users#updateUser'
   get '/users/search', to: 'manage_users#searchUsers'
 
