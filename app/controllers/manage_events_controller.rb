@@ -109,7 +109,7 @@ class ManageEventsController < ApplicationController
     def getEventsBySite
         if request.headers.include? "Authorization"
             if current_user = checkToken(request.headers["Authorization"])
-                result = HTTParty.get(EVENTS_MS + "view/events_site/" + params[:event_id].to_s)
+                result = HTTParty.get(EVENTS_MS + "view/events_site/" + params[:site_id].to_s)
                 if result.code == 200
                     render json: {
                         events: JSON.parse(result.body),
