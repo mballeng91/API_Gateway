@@ -112,7 +112,7 @@ class ManageEventsController < ApplicationController
                 result = HTTParty.get(EVENTS_MS + "view/events_site/" + params[:event_id].to_s)
                 if result.code == 200
                     render json: {
-                        sites: JSON.parse(result.body),
+                        events: JSON.parse(result.body),
                         token: current_user.header['jwt']                        
                     }, status: :ok
                 else
