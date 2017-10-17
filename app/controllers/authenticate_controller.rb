@@ -20,4 +20,25 @@ class AuthenticateController < ApplicationController
             }, status: :unauthorized
         end
     end
+
+    def logout
+        options = {
+            :headers => {
+                'Accept' => 'application/json',
+                'Authorization' => request.headers["Authorization"]
+            }
+        }
+        result = HTTParty.get("http://192.168.99.101:3001/logout", options)
+
+        if result.code == 200
+            render json: {
+                message: "Se realizó el logout correctamente",
+            }, status: :ok
+        else
+            render json: {
+                message: "El token no es valido o ya expriró",
+            }, status: :unauthorized
+            return false
+        end
+    end
 end

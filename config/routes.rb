@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   post '/sign-in', to: 'authenticate#authUser'
-
+  get '/logout', to: 'authenticate#logout'
+  
   post '/events/', to: 'manage_events#createEvent'
   post '/events/:event_id/invite', to: 'manage_events#inviteUsers'
   get '/events/', to: 'manage_events#getEvents'
