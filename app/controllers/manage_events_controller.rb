@@ -93,27 +93,18 @@ class ManageEventsController < ApplicationController
     end
 
     def getSites
-        if request.headers.include? "Authorization"
-            if current_user = checkToken(request.headers["Authorization"])
-                result = HTTParty.get(EVENTS_MS + "sites")
-                if result.code == 200
-                    render json: {
-                        sites: JSON.parse(result.body),
-                        token: current_user.header['jwt']
-                    }, status: :ok
-                else
-                    render json: {
-                        message: "Ocurrió un error al obtener los sitios",
-                        errors: JSON.parse(result.body),
-                        token: current_user.header['jwt']
-                    }, status: :bad_request
-                end
-            end
+        result = HTTParty.get(EVENTS_MS + "sites")
+        if result.code == 200
+            render json: {
+                sites: JSON.parse(result.body),
+            }, status: :ok
         else
             render json: {
-                message: "Necesita de un token para realizar las peticiones",
-            }, status: :unauthorized
+                message: "Ocurrió un error al obtener los sitios",
+                errors: JSON.parse(result.body),
+            }, status: :bad_request
         end
+    end
     end
 
     def inviteUsers
