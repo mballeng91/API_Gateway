@@ -105,6 +105,29 @@ class ManageEventsController < ApplicationController
             }, status: :bad_request
         end
     end
+
+    def getEventsBySite
+        if request.headers.include? "Authorization"
+            if current_user = checkToken(request.headers["Authorization"])
+                result = HTTParty.get(EVENTS_MS + "view/events_site/" + params[:event_id].to_s)
+                if result.code == 200
+                    render json: {
+                        sites: JSON.parse(result.body),
+                        token: current_user.header['jwt']                        
+                    }, status: :ok
+                else
+                    render json: {
+                        message: "Ocurrió un error al obtener los eventos",
+                        errors: JSON.parse(result.body),
+                        token: current_user.header['jwt']                        
+                    }, status: :bad_request
+                end
+            end
+        else
+            render json: {
+                message: "Necesita de un token para realizar las peticiones",
+            }, status: :unauthorized
+        end
     end
 
     def inviteUsers

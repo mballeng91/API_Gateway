@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   get '/events/', to: 'manage_events#getEvents'
   get '/events/:event_id/attendance', to: 'manage_events#getEventWithAttendance'
   get '/events/myEvents', to: 'manage_events#getMyEvents'
+  get '/events/site/:site_id', to: 'manage_events#getEventsBySite'
+  
   
 
   get '/sites', to: 'manage_events#getSites'
