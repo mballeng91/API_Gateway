@@ -56,17 +56,27 @@ class ManageUsersController < ApplicationController
     def searchUsers
         if request.headers.include? "Authorization"
             if current_user = checkToken(request.headers["Authorization"])
-                result = HTTParty.get(USERS_MS + "search?email=" + :params[email].to_s)
-                if result.code == 200
+                old_token = current_user.header['jwt']
+                options = {
+                    :headers => {
+                        'Accept' => 'application/json',
+                        'Authorization' => old_token
+                    }
+                }
+                result1 = HTTParty.get(USERS_MS + "search?q=" + params[:name], options)
+                # puts current_user.header['jwt']
+                # puts result1.header['jwt']
+                new_token = result1.header['jwt']
+                if result1.code == 200
                     render json: {
-                        users: JSON.parse(result.body),
-                        token: current_user.header['jwt']
+                        users: JSON.parse(result1.body),
+                        token: new_token
                     }, status: :ok
                 else
                     render json: {
                         message: "Ocurrió un error al obtener los usuarios",
-                        errors: JSON.parse(result.body),
-                        token: current_user.header['jwt']
+                        errors: result1.body,
+                        token: new_token
                     }, status: :bad_request
                 end
             end
