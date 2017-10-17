@@ -2,7 +2,7 @@
 
 swagger: '2.0'
 info:
-  version: 1.0.0
+  version: 2.0.0
   title: API Gateway
   description: Ruby
   contact:
@@ -41,6 +41,47 @@ paths:
           description: Ok
           schema:
             $ref: '#/definitions/UserAuthOk'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModelOnlyMessage'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+  /logout:
+    get:
+      security:
+        - token: []
+      tags: 
+        - Users
+      summary: Authenticate user
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/ErrorModelOnlyMessage'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModelOnlyMessage'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+  /users/myProfile:
+    get:
+      security:
+        - token: []
+      tags: 
+        - Users
+      summary: Returns the current user
+
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/UserInfoWithToken'
         '401':
           description: Unauthorized
           schema:
@@ -118,17 +159,17 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorModel'
-  /users/search/{email}:
+  /users/search?name={name}:
     get:
       security:
         - token: []
       tags: 
         - Users
-      summary: Returns the users with that match selected email
+      summary: Returns the users with that match selected name
       parameters:
-        - name: email
+        - name: name
           in: path
-          description: The email to search
+          description: The name to search
           required: true
           type: string
       responses:
@@ -277,6 +318,32 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorModel'
+  /events/site/{site_id}:
+    get:
+      security:
+        - token: []
+      tags: 
+        - Events
+      parameters:
+        - name: site_id
+          in: path
+          description: The id of the site
+          required: true
+          type: string
+      summary: Returns all the events of the selected site
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/EventsList'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorModelOnlyMessage'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
   /events/{id}/invite:
     post:
       security:
@@ -314,8 +381,6 @@ paths:
             $ref: '#/definitions/ErrorModel'
   /sites:
     get:
-      security:
-        - token: []
       tags: 
         - Sites
       summary: Returns all the sites
@@ -364,6 +429,24 @@ definitions:
         type: string
       age:
         type: integer
+  UserInfoWithToken:
+    type: object
+    properties:
+      user:
+        type: object
+        properties:
+          id:
+            type: integer
+          first_name:
+            type: string
+          last_name:
+            type: string
+          email:
+            type: string
+          age:
+            type: integer
+      token:
+        type: string
         
   UserAuth:
     type: object
