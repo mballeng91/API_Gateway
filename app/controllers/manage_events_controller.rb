@@ -16,7 +16,7 @@ class ManageEventsController < ApplicationController
                         :site_id => params[:site_id],
                         :start_time => params[:start_time],
                         :end_time => params[:end_time],
-                        :owner_id => current_user["id"]
+                        :owner_id => current_user["user"]["id"]
                     }.to_json,
 			:headers => {
                         	'Content-Type' => 'application/json'
@@ -71,7 +71,7 @@ class ManageEventsController < ApplicationController
     def getMyEvents
         if request.headers.include? "Authorization"
             if current_user = checkToken(request.headers["Authorization"])
-                result = HTTParty.get(EVENTS_MS + "view/my_events/" + current_user["id"].to_s)
+                result = HTTParty.get(EVENTS_MS + "view/my_events/" + current_user["user"]["id"].to_s)
                 if result.code == 200
                     render json: {
                         events: JSON.parse(result.body),
@@ -137,7 +137,7 @@ class ManageEventsController < ApplicationController
                     options = {
                         :body => {
                             :Invita => {
-                                :ID => current_user["id"],
+                                :ID => current_user["user"]["id"],
                                 :Email => current_user["email"]
                             },
                             :Evento => {
@@ -234,7 +234,7 @@ class ManageEventsController < ApplicationController
                         'Content-Type' => 'application/json'
                     }
                 }
-		result1 = HTTParty.get(ATTENDANCE_MS + "api/attendance/?event_id=" + event["id"].to_s + "&user_id=" + current_user["id"].to_s  )
+		result1 = HTTParty.get(ATTENDANCE_MS + "api/attendance/?event_id=" + event["id"].to_s + "&user_id=" + current_user["user"]["id"].to_s  )
 		objects = result1.parsed_response["objects"]
 		puts objects
 		puts "resource_uri"
