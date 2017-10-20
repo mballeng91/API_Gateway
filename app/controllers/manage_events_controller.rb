@@ -223,6 +223,22 @@ class ManageEventsController < ApplicationController
         end
     end
 
+    def getMyInvitations
+        if request.headers.include? "Authorization"
+            if current_user = checkToken(request.headers["Authorization"])
+                result = HTTParty.get(ATTENDANCE_MS + "api/attendance/?user_id=" + current_user["user"]["id"].to_s  )
+                render json: {
+                    response: result.parsed_response,
+                    token: current_user.header['jwt']
+                }, status: :ok
+            end
+        else
+            render json: {
+                message: "Necesita de un token para realizar las peticiones",
+            }, status: :unauthorized
+        end
+    end
+
     def defineAttendance
         if request.headers.include? "Authorization"
             if current_user = checkToken(request.headers["Authorization"]) && event = checkEvent(params[:event_id])
