@@ -1,6 +1,6 @@
 class ManageEventsController < ApplicationController
     USERS_MS = "http://192.168.99.101:3000/"
-    EVENTS_MS = "http://192.168.99.101:3008/"
+    EVENTS_MS = "http://192.168.99.101:3006/"
     INVITES_MS = "http://192.168.99.101:3005/"
     ATTENDANCE_MS = "http://192.168.99.101:3004/"
     ATTENDANCE_MS2 = "http://192.168.99.101:3004"
