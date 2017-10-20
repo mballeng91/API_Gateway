@@ -26,7 +26,7 @@ class ManageEventsController < ApplicationController
                 if result.code == 201
                     render json: {
                         message: "El evento se creó correctamente",
-                        user: JSON.parse(result.body),
+                        event: JSON.parse(result.body),
                         token: current_user.header['jwt']
                     }, status: :created
                 else
