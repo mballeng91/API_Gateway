@@ -7,7 +7,7 @@ class ManageEventsController < ApplicationController
 
     def createEvent
         if request.headers.include? "Authorization"
-            if current_user = checkToken(request.headers["Authorization"])
+            if current_user = AuthenticateController.checkToken(request.headers["Authorization"])
                 # puts current_user.header['jwt']
                 options = {
                     :body => {
@@ -46,7 +46,7 @@ class ManageEventsController < ApplicationController
 
     def getEvents
         if request.headers.include? "Authorization"
-            if current_user = checkToken(request.headers["Authorization"])
+            if current_user = AuthenticateController.checkToken(request.headers["Authorization"])
                 result = HTTParty.get(EVENTS_MS + "events")
                 if result.code == 200
                     render json: {
@@ -68,10 +68,10 @@ class ManageEventsController < ApplicationController
         end
     end
 
-    def getMyEvents
+    def getEventsByOwnerId
         if request.headers.include? "Authorization"
-            if current_user = checkToken(request.headers["Authorization"])
-                result = HTTParty.get(EVENTS_MS + "view/my_events?owner_id=" + current_user["user"]["id"].to_s)
+            if current_user = AuthenticateController.checkToken(request.headers["Authorization"])
+                result = HTTParty.get(EVENTS_MS + "events/owner/" + current_user["user"]["id"].to_s)
                 if result.code == 200
                     render json: {
                         events: JSON.parse(result.body),
@@ -92,24 +92,10 @@ class ManageEventsController < ApplicationController
         end
     end
 
-    def getSites
-        result = HTTParty.get(EVENTS_MS + "sites")
-        if result.code == 200
-            render json: {
-                sites: JSON.parse(result.body),
-            }, status: :ok
-        else
-            render json: {
-                message: "Ocurrió un error al obtener los sitios",
-                errors: JSON.parse(result.body),
-            }, status: :bad_request
-        end
-    end
-
-    def getEventsBySite
+    def getEventsByPlace
         if request.headers.include? "Authorization"
-            if current_user = checkToken(request.headers["Authorization"])
-                result = HTTParty.get(EVENTS_MS + "view/events_site/" + params[:site_id].to_s)
+            if current_user = AuthenticateController.checkToken(request.headers["Authorization"])
+                result = HTTParty.get(EVENTS_MS + "events/place/" + params[:site_id].to_s)
                 if result.code == 200
                     render json: {
                         events: JSON.parse(result.body),
@@ -132,7 +118,7 @@ class ManageEventsController < ApplicationController
 
     def inviteUsers
         if request.headers.include? "Authorization"
-            if current_user = checkToken(request.headers["Authorization"])
+            if current_user = AuthenticateController.checkToken(request.headers["Authorization"])
                 if event = checkEvent(params[:event_id])
                     options = {
                         :body => {
@@ -205,7 +191,7 @@ class ManageEventsController < ApplicationController
 
     def getEventWithAttendance
         if request.headers.include? "Authorization"
-            if current_user = checkToken(request.headers["Authorization"]) && event = checkEvent(params[:event_id])
+            if current_user = AuthenticateController.checkToken(request.headers["Authorization"]) && event = checkEvent(params[:event_id])
               invitations = getInvitations(params[:event_id])
                 if invitations
                   puts invitations
@@ -225,7 +211,7 @@ class ManageEventsController < ApplicationController
 
     def getMyInvitations
         if request.headers.include? "Authorization"
-            if current_user = checkToken(request.headers["Authorization"])
+            if current_user = AuthenticateController.checkToken(request.headers["Authorization"])
                 result = HTTParty.get(ATTENDANCE_MS + "api/attendance/?user_id=" + current_user["user"]["id"].to_s  )
                 render json: {
                     response: result.parsed_response,
@@ -241,7 +227,7 @@ class ManageEventsController < ApplicationController
 
     def defineAttendance
         if request.headers.include? "Authorization"
-            if current_user = checkToken(request.headers["Authorization"]) && event = checkEvent(params[:event_id])
+            if current_user = AuthenticateController.checkToken(request.headers["Authorization"]) && event = checkEvent(params[:event_id])
                 options = {
                     :body => {
                         :status => params[:status]
@@ -302,25 +288,6 @@ class ManageEventsController < ApplicationController
                 message: "El evento no existe o ya expiró",
                 token: current_user.header['jwt']
             }, status: :unauthorized
-        end
-    end
-
-    def checkToken(token)
-        options = {
-            :headers => {
-                'Accept' => 'application/json',
-                'Authorization' => token
-            }
-        }
-        result = HTTParty.get(USERS_MS + "authorize", options)
-
-        if result.code == 200
-            return result
-        else
-            render json: {
-                message: "El token no es valido o ya expriró",
-            }, status: :unauthorized
-            return false
         end
     end
 end
