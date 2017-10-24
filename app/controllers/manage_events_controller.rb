@@ -8,7 +8,6 @@ class ManageEventsController < ApplicationController
     def createEvent
         if request.headers.include? "Authorization"
             if current_user = checkToken(request.headers["Authorization"])
-                # puts current_user.header['jwt']
                 options = {
                     :body => {
                         :name => params[:name],
@@ -333,8 +332,5 @@ class ManageEventsController < ApplicationController
             }, status: :unauthorized
         end
     end
-
-
-
 
 end
