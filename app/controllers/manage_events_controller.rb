@@ -275,9 +275,7 @@ class ManageEventsController < ApplicationController
 
     def getAttendance(id)
         result = HTTParty.get(ATTENDANCE_MS + "api/attendance/?event_id=" + id.to_s )
-
             return result
-
     end
 
     def getInvitations(id)
@@ -323,4 +321,20 @@ class ManageEventsController < ApplicationController
             return false
         end
     end
+
+    def site_by_id(id)
+        result = HTTParty.get(EVENTS_MS + "places/" + id.to_s)
+        if result.code == 200
+            return result
+        else
+            render json: {
+                message: "El sitio con id: " + id.to_s + "no existe",
+                token: current_user.header['jwt']
+            }, status: :unauthorized
+        end
+    end
+
+
+
+
 end
