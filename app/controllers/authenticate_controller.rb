@@ -41,4 +41,23 @@ class AuthenticateController < ApplicationController
             return false
         end
     end
+
+    def self.checkToken(token)
+        options = {
+            :headers => {
+                'Accept' => 'application/json',
+                'Authorization' => token
+            }
+        }
+        result = HTTParty.get(USERS_MS + "authorize", options)
+
+        if result.code == 200
+            return result
+        else
+            render json: {
+                message: "El token no es valido o ya expriró",
+            }, status: :unauthorized
+            return false
+        end
+    end
 end
