@@ -7,8 +7,7 @@ class ManageEventsController < ApplicationController
 
     def createEvent
         if request.headers.include? "Authorization"
-            if current_user = AuthenticateController.checkToken(request.headers["Authorization"])
-                # puts current_user.header['jwt']
+            if current_user = checkToken(request.headers["Authorization"])
                 options = {
                     :body => {
                         :name => params[:name],
@@ -261,9 +260,7 @@ class ManageEventsController < ApplicationController
 
     def getAttendance(id)
         result = HTTParty.get(ATTENDANCE_MS + "api/attendance/?event_id=" + id.to_s )
-
             return result
-
     end
 
     def getInvitations(id)
@@ -290,4 +287,38 @@ class ManageEventsController < ApplicationController
             }, status: :unauthorized
         end
     end
+
+
+    def checkToken(token)
+        options = {
+            :headers => {
+                'Accept' => 'application/json',
+                'Authorization' => token
+            }
+        }
+        result = HTTParty.get(USERS_MS + "authorize", options)
+
+        if result.code == 200
+            return result
+        else
+            render json: {
+                message: "El token no es valido o ya expriró",
+            }, status: :unauthorized
+            return false
+        end
+    end
+
+    def site_by_id(id)
+        result = HTTParty.get(EVENTS_MS + "places/" + id.to_s)
+        if result.code == 200
+            return result
+        else
+            render json: {
+                message: "El sitio con id: " + id.to_s + "no existe",
+                token: current_user.header['jwt']
+            }, status: :unauthorized
+        end
+    end
+
+
 end
