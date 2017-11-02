@@ -6,7 +6,7 @@ class ManagePlacesController < ApplicationController
         result = HTTParty.get(PLACES_MS + "places")
         if result.code == 200
             render json: {
-                sites: JSON.parse(result.body),
+                places: JSON.parse(result.body),
             }, status: :ok
         else
             render json: {
@@ -17,13 +17,14 @@ class ManagePlacesController < ApplicationController
     end
 
     def getPlacesById
-         result = HTTParty.get(EVENTS_MS + "places/"  + params[:place_id].to_s)
+         result = HTTParty.get(PLACES_MS + "places/"  + params[:place_id].to_s)
          if result.code == 200
-             return result
+             render json: {
+                 response: JSON.parse(result.body),
+             }, status: :ok
          else
              render json: {
-                 message: "El sitio con id: " + params[:place_id].to_s + "no existe",
-                 token: current_user.header['jwt']
+                 message: "El sitio con id: " + params[:place_id].to_s + "no existe"
              }, status: :not_found
          end
      end
