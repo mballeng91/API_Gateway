@@ -3,10 +3,10 @@ Rails.application.routes.draw do
   post '/sign-in', to: 'authenticate#authUser'
   get '/logout', to: 'authenticate#logout'
 
-  # Event-related endpoints
-  post '/events/', to: 'manage_events#createEvent'
+  # Events-related endpoints
+  post '/events', to: 'manage_events#createEvent'
   post '/events/:event_id/invite', to: 'manage_events#inviteUsers'
-  get '/events/', to: 'manage_events#getEvents'
+  get '/events', to: 'manage_events#getEvents'
   get '/events/:event_id/attendance', to: 'manage_events#getEventWithAttendance'
   get '/events/myEvents', to: 'manage_events#getEventsByOwnerId'
   get '/events/place/:place_id', to: 'manage_events#getEventsByPlace'
@@ -15,10 +15,10 @@ Rails.application.routes.draw do
 
   # Places-related endpoints
   get '/places', to: 'manage_places#getPlaces'
-  get '/places/:place_id' to 'manage_places#get_Places_By_Id'
+  get '/places/:place_id', to: 'manage_places#getPlacesById'
 
-  # users-related end
-  post '/users/', to: 'manage_users#createUser'
+  # Users-related endpoints
+  post '/users', to: 'manage_users#createUser'
   get '/users/myProfile', to: 'manage_users#profile'
   put '/users/update/:id', to: 'manage_users#updateUser'
   get '/users/search', to: 'manage_users#searchUsers'

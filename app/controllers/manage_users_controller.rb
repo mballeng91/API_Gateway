@@ -1,5 +1,5 @@
 class ManageUsersController < ApplicationController
-    USERS_MS = "http://192.168.99.101:3000/"
+    USERS_MS = "http://192.168.99.101:3001/"
     def createUser
         options = {
             :body => {
@@ -63,7 +63,7 @@ class ManageUsersController < ApplicationController
                         'Authorization' => old_token
                     }
                 }
-                sleep(1) #sleep a second                
+                sleep(1) #sleep a second
                 result1 = HTTParty.get(USERS_MS + "search?q=" + params[:name], options)
                 # puts current_user.header['jwt']
                 # puts result1.header['jwt']

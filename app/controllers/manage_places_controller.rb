@@ -1,6 +1,6 @@
 class ManagePlacesController < ApplicationController
-    USERS_MS = "http://192.168.99.101:3000/"
-    PLACES_MS = "http://192.168.99.101:3006/"
+    USERS_MS = "http://192.168.99.101:3001/"
+    PLACES_MS = "http://192.168.99.101:3002/"
 
     def getPlaces
         result = HTTParty.get(PLACES_MS + "places")
@@ -16,15 +16,15 @@ class ManagePlacesController < ApplicationController
         end
     end
 
-    def get_Places_By_Id(id)
-         result = HTTParty.get(EVENTS_MS + "places/" + id.to_s)
+    def getPlacesById
+         result = HTTParty.get(EVENTS_MS + "places/"  + params[:place_id].to_s)
          if result.code == 200
              return result
          else
              render json: {
-                 message: "El sitio con id: " + id.to_s + "no existe",
+                 message: "El sitio con id: " + params[:place_id].to_s + "no existe",
                  token: current_user.header['jwt']
-             }, status: :unauthorized
+             }, status: :not_found
          end
      end
 

@@ -1,6 +1,6 @@
 class ManageEventsController < ApplicationController
-    USERS_MS = "http://192.168.99.101:3000/"
-    EVENTS_MS = "http://192.168.99.101:3006/"
+    USERS_MS = "http://192.168.99.101:3001/"
+    EVENTS_MS = "http://192.168.99.101:3002/"
     INVITES_MS = "http://192.168.99.101:3005/"
     ATTENDANCE_MS = "http://192.168.99.101:3004/"
     ATTENDANCE_MS2 = "http://192.168.99.101:3004"
@@ -13,7 +13,7 @@ class ManageEventsController < ApplicationController
                     :body => {
                         :name => params[:name],
                         :description => params[:description],
-                        :site_id => params[:site_id],
+                        :place_id => params[:place_id],
                         :start_time => params[:start_time],
                         :end_time => params[:end_time],
                         :owner_id => current_user["user"]["id"]
@@ -95,7 +95,7 @@ class ManageEventsController < ApplicationController
     def getEventsByPlace
         if request.headers.include? "Authorization"
             if current_user = AuthenticateController.checkToken(request.headers["Authorization"])
-                result = HTTParty.get(EVENTS_MS + "events/place/" + params[:site_id].to_s)
+                result = HTTParty.get(EVENTS_MS + "events/place/" + params[:place_id].to_s)
                 if result.code == 200
                     render json: {
                         events: JSON.parse(result.body),
