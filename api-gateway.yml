@@ -26,7 +26,7 @@ securityDefinitions:
 paths:
   /sign-in:
     post:
-      tags: 
+      tags:
         - Users
       summary: Authenticate user
       parameters:
@@ -53,7 +53,7 @@ paths:
     get:
       security:
         - token: []
-      tags: 
+      tags:
         - Users
       summary: Authenticate user
       responses:
@@ -73,7 +73,7 @@ paths:
     get:
       security:
         - token: []
-      tags: 
+      tags:
         - Users
       summary: Returns the current user
 
@@ -92,7 +92,7 @@ paths:
             $ref: '#/definitions/ErrorModel'
   /users:
     post:
-      tags: 
+      tags:
         - Users
       summary: Create an user
       parameters:
@@ -118,7 +118,7 @@ paths:
     put:
       security:
         - token: []
-      tags: 
+      tags:
         - Users
       summary: Update an user
       parameters:
@@ -143,7 +143,7 @@ paths:
     delete:
       security:
         - token: []
-      tags: 
+      tags:
         - Users
       summary: Delete an user
       responses:
@@ -163,7 +163,7 @@ paths:
     get:
       security:
         - token: []
-      tags: 
+      tags:
         - Users
       summary: Returns the users with that match selected name
       parameters:
@@ -189,7 +189,7 @@ paths:
     post:
       security:
         - token: []
-      tags: 
+      tags:
         - Events
       summary: Create an event
       parameters:
@@ -216,11 +216,11 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorModel'
-    
+
     get:
       security:
         - token: []
-      tags: 
+      tags:
         - Events
       summary: Returns all events
       responses:
@@ -240,7 +240,7 @@ paths:
     get:
       security:
         - token: []
-      tags: 
+      tags:
         - Events
       summary: Returns an event including attendance and invitations
       parameters:
@@ -265,7 +265,7 @@ paths:
     put:
       security:
         - token: []
-      tags: 
+      tags:
         - Events
       summary: Define an user attendance for specific events
       parameters:
@@ -274,7 +274,7 @@ paths:
           description: The id of the event to assign the attendance
           required: true
           type: string
-          
+
         - name: status
           in: body
           required: true
@@ -302,7 +302,7 @@ paths:
     get:
       security:
         - token: []
-      tags: 
+      tags:
         - Events
       summary: Returns all the events of the user
       responses:
@@ -322,7 +322,7 @@ paths:
     get:
       security:
         - token: []
-      tags: 
+      tags:
         - Events
       parameters:
         - name: site_id
@@ -348,7 +348,7 @@ paths:
     post:
       security:
         - token: []
-      tags: 
+      tags:
         - Events
       summary: Send the invitation for specific events
       parameters:
@@ -357,7 +357,7 @@ paths:
           description: The id of the event
           required: true
           type: string
-          
+
         - name: Invitation
           in: body
           required: true
@@ -381,7 +381,7 @@ paths:
             $ref: '#/definitions/ErrorModel'
   /sites:
     get:
-      tags: 
+      tags:
         - Sites
       summary: Returns all the sites
       responses:
@@ -397,7 +397,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorModel'
-            
+
 definitions:
 # User
   User:
@@ -415,7 +415,7 @@ definitions:
         type: string
       password_confirmation:
         type: string
-        
+
   UserInfo:
     type: object
     properties:
@@ -447,7 +447,7 @@ definitions:
             type: integer
       token:
         type: string
-        
+
   UserAuth:
     type: object
     properties:
@@ -460,7 +460,7 @@ definitions:
     properties:
       token:
         type: string
-        
+
   UserToEdit:
     type: object
     properties:
@@ -488,7 +488,7 @@ definitions:
           $ref: '#/definitions/UserInfo'
       token:
         type: string
-          
+
 # Event
   Event:
     type: object
@@ -503,7 +503,7 @@ definitions:
         type: string
       end_time:
         type: string
-        
+
   EventUpdate:
     type: object
     properties:
@@ -526,7 +526,7 @@ definitions:
             type: string
           longitude:
             type: string
-        
+
   EventCreated:
     type: object
     properties:
@@ -554,7 +554,7 @@ definitions:
           $ref: '#/definitions/EventCreated'
       token:
         type: string
-          
+
   EventWithInfo:
     type: object
     properties:
@@ -572,7 +572,7 @@ definitions:
           $ref: '#/definitions/Attendance'
       token:
         type: string
-          
+
   EventsList:
     type: object
     properties:
@@ -582,7 +582,7 @@ definitions:
           $ref: '#/definitions/EventCreated'
       token:
         type: string
-        
+
   SitesList:
     type: object
     properties:
@@ -641,15 +641,15 @@ definitions:
         type: integer
       sent_date:
         type: string
-        
+
   InvitationList:
     type: object
     properties:
       invites:
         type: array
-        items: 
+        items:
           $ref: '#/definitions/InvitationToSend'
-          
+
   InvitationToSend:
     type: object
     properties:
